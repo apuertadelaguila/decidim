@@ -1423,6 +1423,7 @@ en:
     searches:
       filters:
         jump_to: 'Jump to:'
+        search: Search
         state:
           active: Active
           all: All

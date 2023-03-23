@@ -206,6 +206,7 @@ en:
           categories: Categories
           components: Components
           info: Info
+          landing_page: Landing page
           moderations: Moderations
           private_users: Private users
         assemblies_types: Assemblies types
@@ -346,6 +347,8 @@ en:
         participatory: Participatory
         working_group: Working group
       content_blocks:
+        children_assemblies:
+          name: Assemblies
         highlighted_assemblies:
           name: Highlighted assemblies
         related_assemblies:
@@ -379,7 +382,6 @@ en:
             member_of: Member of
       show:
         assembly_type: Assembly type
-        children: Assemblies
         duration: Duration
         is_transparent:
           'false': opaque

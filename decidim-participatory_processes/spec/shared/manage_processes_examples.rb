@@ -60,7 +60,7 @@ shared_examples "manage processes examples" do
           click_link "Preview"
         end
 
-        expect(page).to have_css(".process-header")
+        expect(page).to have_css(".participatory-space__container")
         expect(page).to have_content(translated(participatory_process.title))
       end
     end
@@ -168,7 +168,7 @@ shared_examples "manage processes examples" do
       visit decidim_admin_participatory_processes.participatory_processes_path
     end
 
-    it "doesn't let the admin manage processes form other organizations" do
+    it "does not let the admin manage processes form other organizations" do
       within "table" do
         expect(page).to have_no_content(external_participatory_process.title["en"])
       end

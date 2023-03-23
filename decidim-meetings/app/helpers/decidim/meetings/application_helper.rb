@@ -47,7 +47,13 @@ module Decidim
       # frontend, the meeting body is considered as safe content; that's unless
       # the meeting comes from a collaborative_draft or a participatory_text.
       def safe_content?
-        rich_text_editor_in_public_views? || @meeting.official?
+        rich_text_editor_in_public_views? || safe_content_admin?
+      end
+
+      # For admin entered content, the meeting body can contain certain extra
+      # tags, such as iframes.
+      def safe_content_admin?
+        @meeting.official?
       end
 
       # If the content is safe, HTML tags are sanitized, otherwise, they are stripped.
@@ -76,6 +82,13 @@ module Decidim
 
       def iframe_embed_or_live_event_page?(meeting)
         %w(embed_in_meeting_page open_in_live_event_page).include? meeting.iframe_embed_type
+      end
+
+      def apply_meetings_pack_tags
+        return unless respond_to?(:snippets)
+
+        snippets.add(:head, stylesheet_pack_tag("decidim_meetings", media: "all"))
+        snippets.add(:foot, javascript_pack_tag("decidim_meetings"))
       end
     end
   end

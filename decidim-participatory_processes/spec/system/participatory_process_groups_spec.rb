@@ -40,14 +40,14 @@ describe "Participatory Process Groups", type: :system do
     it "lists all the groups among the processes" do
       within "#processes-grid" do
         expect(page).to have_content(translated(participatory_process_group.title, locale: :en))
-        expect(page).to have_selector(".card", count: 1)
+        expect(page).to have_selector("a.card__grid", count: 1)
 
         expect(page).to have_no_content(translated(other_group.title, locale: :en))
       end
     end
 
     it "links to the individual group page" do
-      first(".card__link", text: translated(participatory_process_group.title, locale: :en)).click
+      first("a.card__grid h3", text: translated(participatory_process_group.title, locale: :en)).click
 
       expect(page).to have_current_path decidim_participatory_processes.participatory_process_group_path(participatory_process_group)
     end
@@ -301,10 +301,10 @@ describe "Participatory Process Groups", type: :system do
       )
     end
 
-    it "shows no data if there are no components or followers in depending participatory processes" do
+    it "shows no statistics content block if there are no components or followers in depending participatory processes" do
       visit decidim_participatory_processes.participatory_process_group_path(participatory_process_group)
 
-      expect(page).to have_content("There are no statistics yet")
+      expect(page).to have_no_css("section[data-statistics]")
     end
 
     context "when there are components and depending resources" do
@@ -326,6 +326,10 @@ describe "Participatory Process Groups", type: :system do
           proposal.coauthorships.create(author: user)
         end
         visit decidim_participatory_processes.participatory_process_group_path(participatory_process_group)
+      end
+
+      it "shows the statistics content block" do
+        expect(page).to have_css("section[data-statistics]")
       end
 
       it "shows unique participants count from both participatory processes" do
@@ -421,11 +425,11 @@ describe "Participatory Process Groups", type: :system do
         participatory_process_group: create(:participatory_process_group, organization:)
       )
     end
-    let(:titles) { page.all(".card__title") }
+    let(:titles) { page.all("a.card__grid h3") }
 
     shared_examples "showing all processes counts" do
       it "shows count of all group processes" do
-        within "#processes-grid h3" do
+        within "#processes-grid h3.section-heading" do
           expect(page).to have_content(/ALL\s+\(5\)/)
         end
       end
@@ -467,7 +471,7 @@ describe "Participatory Process Groups", type: :system do
       it_behaves_like "not showing processes belonging to other group"
 
       it "shows counts of other processes" do
-        within "#processes-grid h3" do
+        within "#processes-grid h3.section-heading" do
           expect(page).to have_content("3 ACTIVE PROCESSES")
           expect(page).to have_content(/UPCOMING\s+\(1\)/)
           expect(page).to have_content(/PAST\s+\(1\)/)
@@ -481,6 +485,8 @@ describe "Participatory Process Groups", type: :system do
           visit decidim_participatory_processes.participatory_process_group_path(participatory_process_group)
           within ".order-by__tabs" do
             click_link "Past"
+
+            sleep 2
           end
         end
 
@@ -495,7 +501,7 @@ describe "Participatory Process Groups", type: :system do
         it_behaves_like "not showing processes belonging to other group"
 
         it "shows counts of processes" do
-          within "#processes-grid h3" do
+          within "#processes-grid h3.section-heading" do
             expect(page).to have_content("1 PAST PROCESS")
             expect(page).to have_content(/UPCOMING\s+\(1\)/)
             expect(page).to have_content(/ACTIVE\s+\(3\)/)
@@ -508,6 +514,7 @@ describe "Participatory Process Groups", type: :system do
           visit decidim_participatory_processes.participatory_process_group_path(participatory_process_group)
           within ".order-by__tabs" do
             click_link "Upcoming"
+            sleep 2
           end
         end
 
@@ -522,7 +529,7 @@ describe "Participatory Process Groups", type: :system do
         it_behaves_like "not showing processes belonging to other group"
 
         it "shows counts of processes" do
-          within "#processes-grid h3" do
+          within "#processes-grid h3.section-heading" do
             expect(page).to have_content("1 UPCOMING PROCESS")
             expect(page).to have_content(/PAST\s+\(1\)/)
             expect(page).to have_content(/ACTIVE\s+\(3\)/)
@@ -547,7 +554,7 @@ describe "Participatory Process Groups", type: :system do
         it_behaves_like "not showing processes belonging to other group"
 
         it "shows counts of processes belonging to that scope" do
-          within "#processes-grid h3" do
+          within "#processes-grid h3.section-heading" do
             expect(page).to have_content("1 ACTIVE PROCESS")
             expect(page).to have_content(/PAST\s+\(1\)/)
             expect(page).to have_content(/ALL\s+\(2\)/)
@@ -572,7 +579,7 @@ describe "Participatory Process Groups", type: :system do
         it_behaves_like "not showing processes belonging to other group"
 
         it "shows counts of processes belonging to that area" do
-          within "#processes-grid h3" do
+          within "#processes-grid h3.section-heading" do
             expect(page).to have_content("1 ACTIVE PROCESS")
             expect(page).to have_content(/UPCOMING\s+\(1\)/)
             expect(page).to have_content(/ALL\s+\(2\)/)

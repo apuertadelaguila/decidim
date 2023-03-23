@@ -1,38 +1,34 @@
-<div class="<%= card_class %> budget-list__item budget-list__item-cell">
-  <div class="budget-list__text flex-horizontal">
+<div class="<%= card_class %> card__highlight">
+  <div class="card__highlight-text w-[70%]">
     <%= link_to budget_path(budget), class: link_class do %>
-      <h3 class="card--list__heading">
+      <h3 class="h3 text-secondary inline-block align-middle">
         <%= translated_attribute(title) %>
       </h3>
+      <% if voted? %>
+        <%= icon "check-double-line", class: "inline-block align-middle fill-success ml-2 h-[1.5em] w-[1.5em]" %>
+      <% end %>
     <% end %>
 
-    <div class="heading5">
-      <strong>
-        <%= budget_to_currency(total_budget) %>
-      </strong>
-    </div>
+    <%= decidim_sanitize html_truncate(translated_attribute(description), length: 70) %>
 
-    <%= decidim_sanitize html_truncate(translated_attribute(description), length: 140) %>
+    <div class="divide-x-2 divide-gray-3">
+      <%= render :projects_count %>
+      <%= render :vote_action %>
+    </div>
   </div>
 
-  <% if !voting_finished? %>
-    <div class="budget-list__icon mr-s">
-      <% if voted? %>
-        <span class="button tiny success card--list__check card--list__check--disabled card--list__check--inline">
-          <%= icon "check", class: "icon--small", role: "img", aria_label: t("decidim.budgets.budget_list_item.voting_finished") %>
-        </span>
-      <% elsif progress? %>
-        <span class="button tiny warning card--list__check card--list__check--disabled card--list__check--inline">
-          <%= icon "bookmark", class: "icon--small", role: "img", aria_label: t("decidim.budgets.budget_list_item.voting_started") %>
-        </span>
-      <% end %>
+  <div class="budget__card__highlight-vote">
+    <div class="budget__card__highlight-vote__header">
+      <span class="budget__card__highlight-vote__text">
+        <%= t("name", scope: "decidim.budgets.admin.models.budget") %>
+      </span>
+      <span class="budget__card__highlight-vote__number">
+        <%= budget_to_currency(total_budget) %>
+      </span>
     </div>
-  <% end %>
-
-  <div class="budget-list__data">
-    <%= link_to budget_path(budget), class: "button button--sc expanded #{button_class} mb-none" do %>
+    <%= link_to budget_path(budget), class: "button button__sm text-left mt-2 #{button_class} #{!voted? ? 'button__secondary' : 'button__transparent-secondary'} budget__card__highlight-vote__button" do %>
       <span><%= button_text %></span>
-      <%= icon "chevron-right", class: "icon--small", role: "img" %>
+      <%= icon "arrow-right-line" %>
     <% end %>
   </div>
 </div>

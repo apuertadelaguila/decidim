@@ -12,65 +12,68 @@ edit_link(
 )
 %>
 
-<%= render partial: "exit_modal" %>
-<%= cell("decidim/budgets/limit_announcement", budget) %>
-
-<div class="voting-wrapper">
-  <div class="row column view-header">
-    <% unless voting_finished? %>
-      <%= render partial: "budget_summary", locals: { include_heading: false } %>
-    <% end %>
-
-    <div class="m-bottom">
-      <%= link_to budget_projects_path(budget), class: "muted-link js-back-to-list" do %>
-        <%= icon "chevron-left", class: "icon--small", role: "img", "aria-hidden": true %>
-        <%= t(".view_all_projects") %>
-      <% end %>
-    </div>
-    <h2 class="heading2"><%= translated_attribute project.title %></h2>
-  </div>
-  <div class="row">
-    <div id="project" class="columns section view-side mediumlarge-4 mediumlarge-push-8
-      large-3 large-push-9">
-      <div class="card extra">
-        <div class="card__content">
-          <div class="m-bottom">
-            <span class="definition-data__title"><%= t(".budget") %></span>
-            <span class="definition-data__number"><%= budget_to_currency project.budget_amount %></span>
-          </div>
-
-          <%= cell("decidim/budgets/project_votes_count", project, layout: :one_line, class: "display-block") %>
-
-          <% if voting_finished? %>
-            <%= cell("decidim/budgets/project_voted_hint", project, class: "display-block") %>
-          <% elsif voting_open? %>
-            <%= render partial: "project_budget_button", locals: { project: project } %>
-          <% end %>
-
-          <%= render partial: "decidim/shared/follow_button", locals: { followable: project, large: false  } %>
-        </div>
-      </div>
-      <%= resource_reference(project) %>
-      <%= render partial: "decidim/shared/share_modal" %>
-    </div>
-    <div class="columns mediumlarge-8 mediumlarge-pull-4">
-      <div class="section">
-        <% if component_settings.geocoding_enabled? && project.geocoded? %>
-          <%= render partial: "decidim/shared/static_map", locals: { icon_name: "projects", geolocalizable: project } %>
-        <% end %>
-        <%= cell("decidim/budgets/project_selected_status", project, as_label: true) %>
-        <%= decidim_sanitize_editor translated_attribute project.description %>
-        <%= cell "decidim/budgets/project_tags", project, context: { extra_classes: ["tags--project"] } %>
-      </div>
-      <%= attachments_for project %>
-      <%= linked_resources_for project, :proposals, "included_proposals" %>
-      <%= linked_resources_for project, :results, "included_projects" %>
-    </div>
-  </div>
-</div>
-
-<%= comments_for project, polymorphic: [project.budget] %>
-
 <% content_for :js_content do %>
   <%= javascript_pack_tag "decidim_budgets" %>
+<% end %>
+
+<% content_for :css_content do %>
+  <%= stylesheet_pack_tag "decidim_budgets" %>
+<% end %>
+
+<% if redesign_enabled? %>
+  <%= render partial: "redesigned_exit_modal" %>
+<% else %>
+  <%= render partial: "exit_modal" %>
+<% end %>
+
+<% content_for :item_header do %>
+  <% unless voting_finished? %>
+    <%= render partial: "budget_summary", locals: { include_heading: true, project_item: true } %>
+  <% end %>
+<% end %>
+<%= render layout: "layouts/decidim/shared/layout_item", locals: { back_path: budget_path(budget) } do %>
+  <%= cell("decidim/budgets/limit_announcement", budget) %>
+  <% if component_settings.geocoding_enabled? && project.geocoded? %>
+    <%= render partial: "decidim/shared/static_map", locals: { icon_name: "projects", geolocalizable: project } %>
+  <% end %>
+  <%= cell("decidim/budgets/project_selected_status", project, as_label: true) %>
+  <h1 class="h1 decorator budget__definition-project__title editor-content">
+    <%= decidim_sanitize_editor translated_attribute project.title %>
+  </h1>
+  <div class="editor-content">
+    <%= decidim_sanitize_editor translated_attribute project.description %>
+  </div>
+  <%= cell "decidim/budgets/project_tags", project, context: { extra_classes: ["tags--project"] } %>
+  <%= attachments_for project %>
+  <%= linked_resources_for project, :proposals, "included_proposals" %>
+  <%= linked_resources_for project, :results, "included_projects" %>
+
+  <div class="my-4 flex gap-x-1">
+    <%= cell "decidim/comments_button", nil %>
+  </div>
+
+  <%= comments_for project, polymorphic: [project.budget] %>
+  <div class="mt-8">
+    <ul class="drawer-metadata__container" data-metadata-footer>
+      <%= content_tag :li, resource_reference(project), class: "drawer-metadata__item" %>
+      <%= content_tag :li, resource_version(project, versions_path: budget_projects_path(project)), class: "drawer-metadata__item" %>
+      <%= content_tag :li, link_to(t("add_to_calendar", scope: "decidim.meetings.meetings.calendar_modal"), nil, remote: true, data: { dialog_open: "calendarShare_#{project.id}" }), class: "drawer-metadata__item" %>
+    </ul>
+  </div>
+  <% content_for :aside do %>
+    <% if voting_open? %>
+      <%= render partial: "project_budget_button", locals: { project: project } %>
+    <% end %>
+
+    <span class="budget__definition-data__title">
+      <%= t("budget", scope: "decidim.budgets.projects.show") %>
+    </span>
+    <div class="budget__definition-data__number">
+      <%= budget_to_currency project.budget_amount %>
+    </div>
+    <div class="budget__definition-data__grid">
+      <%= render partial: "decidim/shared/follow_button", class: "text-center", locals: { followable: project, large: false } %>
+      <%= cell "decidim/share_button", nil %>
+    </div>
+  <% end %>
 <% end %>

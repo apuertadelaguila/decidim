@@ -1,0 +1,195 @@
+.budget{
+  &-list__map{
+    @apply md:-ml-16 -mt-6 md:-mt-12 mb-6 aspect-square md:aspect-[21/9] [&>*]:h-full [&+*]:mt-6 md:[&+*]:mt-12;
+  }
+
+  &-summary{
+    @apply bg-tertiary;
+
+    box-shadow: 0 4px 6px 0 rgba(211, 211, 211, .25);
+
+    &__cols{
+      @apply col-span-10 lg:col-start-2;
+    }
+
+    &__container{
+      @apply -mt-12 -my-16 mb-8;
+
+      .budget-summary{
+        @apply -ml-16;
+      }
+    }
+
+    &__content{
+      @apply grid grid-cols-[67.6%_30%] items-center gap-x-20 py-8;
+    }
+
+    &__content__header{
+      @apply col-span-2 text-2xl mb-2;
+
+      .ql-editor{
+        @apply inline-block text-2xl;
+      }
+    }
+
+    &__content__header--title{
+      @apply font-semibold;
+    }
+
+    &__content__header--description{
+      @apply text-sm;
+    }
+
+    &__progressbar{
+      @apply my-4 relative;
+
+      .budget-progress{
+        @apply bg-white rounded;
+      }
+
+      &--minimum{
+        @apply absolute;
+
+        .progress-meter--minimum-mark{
+          @apply h-[20px] ml-auto w-[2px] bg-black block;
+        }
+      }
+
+      &--meter{
+        background-color: var(--success);
+
+        @apply h-[20px] rounded;
+      }
+    }
+
+    &__progressbar-marks{
+      @apply grid grid-cols-[70%_1fr_1fr] mt-2;
+    }
+
+    &__progressbar-marks_center{
+      @apply text-center -translate-x-2/4;
+    }
+
+    &__progressbar-marks_right{
+      @apply justify-self-end text-right;
+    }
+
+    &__progressbar-legend{
+      @apply text-sm block;
+
+      .mini-title__strong{
+        @apply block;
+      }
+    }
+
+    &__progressbar-legend-strong{
+      @apply font-bold block;
+    }
+  }
+
+  &__card__list-project{
+    @apply ml-auto rounded py-3 px-6 bg-background w-[40%] min-w-[120px] grid grid-cols-2 place-items-center justify-items-end;
+  }
+
+  &__card__list-project__amount{
+    @apply font-semibold text-gray-2 text-xl inline-block;
+  }
+
+  &__card__highlight-vote{
+    @apply justify-center flex flex-col w-1/4 bg-background px-8 py-4 bg-background font-bold text-gray-2 ml-auto;
+  }
+
+  &__card__highlight-vote__header{
+    @apply place-items-start pb-2;
+  }
+
+  &__card__highlight-vote__text{
+    @apply block text-sm text-gray-2 font-normal;
+  }
+
+  &__card__highlight-vote__number{
+    @apply text-xl font-semibold;
+  }
+
+  &__card__highlight-vote__button{
+    @apply mt-auto;
+  }
+
+  &__definition-project__title .ql-editor{
+    @apply text-4xl;
+  }
+
+  &__definition-data__title{
+    @apply text-sm text-gray-2 mt-6 mb-2 block;
+  }
+
+  &__definition-data__number{
+    @apply text-gray-2 font-bold text-3xl bg-background text-center p-2 rounded;
+  }
+
+  &__definition-data__grid{
+    @apply grid grid-cols-2 mt-4;
+
+    .button_to{
+      @apply text-center;
+    }
+  }
+
+  &__filter-title{
+    @apply font-bold mb-4;
+  }
+
+  &__filter__container{
+    @apply my-4 rounded p-2 border-4 border-white;
+  }
+
+  &__list--header{
+    @apply grid grid-cols-2 my-8;
+  }
+
+  &-list{
+    @apply my-4;
+
+    .card__list{
+      @apply pr-0;
+    }
+
+    .card__link{
+      @apply mb-2 block;
+    }
+
+    .tag-container{
+      @apply [&:not(:first-child)]:px-6;
+    }
+
+    .card__list-content{
+      @apply w-[60%] cursor-pointer pr-24;
+    }
+  }
+}
+
+#budgets-to-vote{
+  .card__highlight-text{
+    @apply w-[70%];
+  }
+
+  .card__highlight-container{
+    @apply mb-0;
+  }
+}
+
+.verification-modal .card__list .budget__card__list-project{
+  @apply inline-block w-[25%] text-center;
+}
+
+.voting-wrapper .budget-summary .budget-summary__cols{
+  @apply col-span-10 pl-16;
+}
+
+.voting-wrapper .budget-summary .budget-summary__content{
+  @apply col-span-10 grid-cols-[57.6%_30%];
+}
+
+#budgets.card__highlight-container{
+  @apply mb-0;
+}

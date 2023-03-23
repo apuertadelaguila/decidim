@@ -1,6 +1,6 @@
 $(() => {
   const $projects = $("#projects, #project");
-  const $budgetSummaryTotal = $(".budget-summary__total");
+  const $budgetSummaryTotal = $(".budget-progress_right_mark");
   const $budgetExceedModal = $("#budget-excess");
   const $budgetSummary = $(".budget-summary__progressbox");
   const $voteButton = $(".budget-vote-button");
@@ -32,4 +32,15 @@ $(() => {
       cancelEvent(event);
     }
   });
+
+  // This hack moves the flash inside the layout (as in the redesign) only for the budgets page
+  // Redesign: this should be removed after the redesign is finished
+  const $budgetsToVote = $("#budgets-to-vote");
+  const $votedBudgets = $("#voted-budgets");
+  const $flash = $(".flash.success");
+  if (($budgetsToVote.length || $votedBudgets.length) && $flash.length) {
+    $("<div class=\"row\"></div>").prependTo($(".layout-2col__main"));
+    $flash.prependTo($(".layout-2col__main .row:eq(0)"));
+    $flash.css("margin-bottom", "1rem");
+  }
 });

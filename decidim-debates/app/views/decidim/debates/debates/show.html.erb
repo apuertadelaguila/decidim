@@ -13,7 +13,7 @@ edit_link(
 )
 %>
 
-<%= render layout: "layouts/decidim/shared/layout_item", locals: { back_path: debates_path } do %>
+<%= render layout: "layouts/decidim/shared/layout_item", locals: { back_path: debates_path, commentable: debate } do %>
   <h2 class="h2 decorator mb-8">
     <%== present(debate).title(links: true, html_escape: true) %>
   </h2>
@@ -58,10 +58,6 @@ edit_link(
     <%= cell "decidim/comments_button", nil %>
   </div>
   <%= cell "decidim/endorsers_list", debate, layout: :full %>
-
-  <div class="my-4">
-    <%= comments_for debate %>
-  </div>
 
   <% content_for :aside do %>
 

@@ -244,7 +244,9 @@ const initializer = (element = document) => {
       }),
       ...(Boolean(elem.querySelector(`#dialog-desc-${dialog}`)) && {
         describedby: `dialog-desc-${dialog}`
-      })
+      }),
+      // allow passing config setup from data-attributes
+      ...elem.dataset
     });
 
     // in order to use the Dialog object somewhere else

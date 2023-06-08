@@ -7,7 +7,7 @@
 </div>
 <h2 class="section-heading"><%= t("finished", scope: "layouts.decidim.initiative_signature_creation_header") %></h2>
 
-<%= render partial: "wizard_steps" %>
+<%= render partial: "wizard_steps", locals: { step: :finish } %>
 
 <div class="card">
   <br>

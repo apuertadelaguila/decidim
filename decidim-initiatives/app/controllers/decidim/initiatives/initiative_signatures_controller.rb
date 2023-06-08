@@ -5,9 +5,9 @@ module Decidim
     require "wicked"
 
     class InitiativeSignaturesController < Decidim::Initiatives::ApplicationController
-      layout "layouts/decidim/initiative_signature_creation"
+      # layout "layouts/decidim/initiative_signature_creation"
 
-      include Wicked::Wizard
+      # include Wicked::Wizard
       include Decidim::Initiatives::NeedsInitiative
       include Decidim::FormFactory
 
@@ -16,27 +16,32 @@ module Decidim
       before_action :enforce_permissions, only: [
         :show,
         :update,
-        :fill_personal_data_step,
-        :set_sms_phone_number_step,
-        :sms_phone_number_step,
-        :set_sms_code_step,
-        :sms_code_step,
-        :set_finish_step,
-        :finish_step
+        :fill_personal_data,
+        :set_sms_phone_number,
+        :sms_phone_number,
+        :set_sms_code,
+        :sms_code,
+        :set_finish,
+        :finish
       ]
+
+      before_action :set_data, only: [:set_sms_phone_number, :set_finish]
 
       helper InitiativeHelper
 
-      helper_method :initiative_type, :extra_data_legal_information
+      helper_method :initiative_type, :extra_data_legal_information, :wizard_steps
 
-      # GET /initiatives/:initiative_id/initiative_signatures/:step
-      def show
-        send("#{step}_step")
-      end
+      def index
+        if fill_personal_data_step?
+          redirect_to fill_personal_data_initiative_initiative_signatures_path(current_initiative)
+          return
+        end
 
-      # PUT /initiatives/:initiative_id/initiative_signatures/:step
-      def update
-        send("set_#{step}_step")
+        if sms_step?
+          redirect_to sms_phone_number_initiative_initiative_signatures_path(current_initiative) && return
+
+        end
+        redirect_to finish_initiative_initiative_signatures_path(current_initiative)
       end
 
       # POST /initiatives/:initiative_id/initiative_signatures
@@ -61,7 +66,18 @@ module Decidim
         end
       end
 
-      def fill_personal_data_step
+      def set_fill_personal_data
+        build_vote_form(params)
+
+        if sms_step?
+          redirect_to sms_phone_number_initiative_initiative_signatures_path(current_initiative)
+        else
+          redirect_to finish_initiative_initiative_signatures_path(current_initiative)
+        end
+        return
+      end
+
+      def fill_personal_data
         @form = form(Decidim::Initiatives::VoteForm)
                 .from_params(
                   initiative: current_initiative,
@@ -69,40 +85,26 @@ module Decidim
                 )
 
         session[:initiative_vote_form] = {}
-        skip_step unless initiative_type.collect_user_extra_fields
-        render_wizard
       end
 
-      def set_sms_phone_number_step
-        if params.has_key?(:initiatives_vote) || !fill_personal_data_step?
-          build_vote_form(params)
-        else
-          check_session_personal_data
-        end
+
+      def sms_phone_number
+        @form = Decidim::Verifications::Sms::MobilePhoneForm.new
+      end
+
+      def set_sms_phone_number
         clear_session_sms_code
 
         if @vote_form.invalid?
           flash[:alert] = I18n.t("personal_data.invalid", scope: "decidim.initiatives.initiative_votes")
-          jump_to(previous_step)
+
+          redirect_to fill_personal_data_initiative_initiative_signatures_path(current_initiative) && return
         end
 
         @form = Decidim::Verifications::Sms::MobilePhoneForm.new
-        render_wizard
       end
 
-      def sms_phone_number_step
-        # if parameters.has_key?(:initiatives_vote) || !fill_personal_data_step?
-        #   build_vote_form(parameters)
-        # else
-        #   check_session_personal_data
-        # end
-        # clear_session_sms_code
-
-        @form = Decidim::Verifications::Sms::MobilePhoneForm.new
-        render_wizard
-      end
-
-      def set_sms_code_step
+      def set_sms_code
         check_session_personal_data if fill_personal_data_step?
         @phone_form = Decidim::Verifications::Sms::MobilePhoneForm.from_params(params.merge(user: current_user))
         @form = Decidim::Verifications::Sms::ConfirmationForm.new
@@ -121,19 +123,15 @@ module Decidim
         end
       end
 
-      def sms_code_step
+      def sms_code
         check_session_personal_data if fill_personal_data_step?
         @phone_form = Decidim::Verifications::Sms::MobilePhoneForm.from_params({ initiative_vote_form: session[:initiative_vote_form], user: current_user })
         @form = Decidim::Verifications::Sms::ConfirmationForm.new
         render_wizard && return if session_sms_code.present?
       end
 
-      def set_finish_step
-        if params.has_key?(:initiatives_vote) || !fill_personal_data_step?
-          build_vote_form(params)
-        else
-          check_session_personal_data
-        end
+
+      def set_finish
 
         if sms_step?
           @confirmation_code_form = Decidim::Verifications::Sms::ConfirmationForm.from_params(params)
@@ -164,13 +162,7 @@ module Decidim
         render_wizard
       end
 
-      def finish_step
-        # if parameters.has_key?(:initiatives_vote) || !fill_personal_data_step?
-        #   build_vote_form(parameters)
-        # else
-        #   check_session_personal_data
-        # end
-
+      def finish
         render_wizard
       end
 
@@ -207,8 +199,10 @@ module Decidim
       def check_session_personal_data
         return if session[:initiative_vote_form].present? && session_vote_form&.valid?
 
+        raise session_vote_form.valid?.inspect
         flash[:alert] = I18n.t("create.error", scope: "decidim.initiatives.initiative_votes")
-        jump_to(:fill_personal_data)
+        redirect_to fill_personal_data_initiative_initiative_signatures_path(current_initiative)
+        return
       end
 
       def store_session_sms_code(metadata)
@@ -236,7 +230,20 @@ module Decidim
         initial_wizard_steps.unshift(:sms_phone_number, :sms_code) if sms_step?
         initial_wizard_steps.unshift(:fill_personal_data) if fill_personal_data_step?
 
-        self.steps = initial_wizard_steps
+        @steps = initial_wizard_steps
+      end
+      # ============================
+
+      def wizard_steps
+        @steps
+      end
+
+      def set_data
+        if params.has_key?(:initiatives_vote) || !fill_personal_data_step?
+          build_vote_form(params)
+        else
+          check_session_personal_data
+        end
       end
     end
   end

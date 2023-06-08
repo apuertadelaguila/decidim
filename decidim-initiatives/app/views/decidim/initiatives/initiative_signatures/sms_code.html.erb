@@ -3,9 +3,9 @@
     <%= t ".help" %>
   </p>
 </div>
-<h2 class="section-heading"><%= t(step, scope: "layouts.decidim.initiative_signature_creation_header") %></h2>
+<h2 class="section-heading"><%= t("sms_code", scope: "layouts.decidim.initiative_signature_creation_header") %></h2>
 
-<%= render partial: "wizard_steps" %>
+<%= render partial: "wizard_steps", locals: { step: :sms_code } %>
 
 <div class="card">
   <div class="card__content">

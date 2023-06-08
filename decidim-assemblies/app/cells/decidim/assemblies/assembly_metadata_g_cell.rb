@@ -9,14 +9,7 @@ module Decidim
       private
 
       def items
-        [type_item, children_item, upcoming_meeting_item].compact
-      end
-
-      def upcoming_meeting_item
-        {
-          hook: :upcoming_meeting_for_card,
-          icon: resource_type_icon_key("Decidim::Meetings::Meeting")
-        }
+        [type_item, children_item].compact
       end
 
       def type_item

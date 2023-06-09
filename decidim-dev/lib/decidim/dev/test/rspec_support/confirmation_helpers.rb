@@ -16,7 +16,7 @@ module ConfirmationHelpers
     confirm_selector = options.fetch(:admin, !Decidim.redesign_active) ? ".confirm-reveal" : "[data-dialog='confirm-modal']"
 
     within(body.find(confirm_selector)) do
-      message = find(".confirm-modal-content").text
+      message = find("[data-confirm-modal-content]").text
       find("a.button[data-confirm-ok]").click
     end
 
@@ -35,7 +35,7 @@ module ConfirmationHelpers
     message = nil
     body = find(:xpath, "/html/body")
     within(body.find(".confirm-reveal")) do
-      message = find(".confirm-modal-content").text
+      message = find("[data-confirm-modal-content]").text
       find("a.button[data-confirm-cancel]").click
     end
 

@@ -27,7 +27,7 @@ describe "Initiative", type: :system do
   shared_examples "initiatives path redirection" do
     it "redirects to initiatives path" do
       accept_confirm do
-        click_link("Send my initiative")
+        click_link("Send my initiative to technical validation")
       end
 
       expect(page).to have_current_path("/initiatives")
@@ -50,7 +50,7 @@ describe "Initiative", type: :system do
         context "and they do not need to be verified" do
           it "they are taken to the initiative form" do
             click_link "New initiative"
-            expect(page).to have_content("Create a new initiative ")
+            expect(page).to have_content("Create a new initiative")
           end
         end
 
@@ -81,7 +81,7 @@ describe "Initiative", type: :system do
               click_link(text: /Example authorization/)
               fill_in "Document number", with: "123456789X"
               click_button "Send"
-              expect(page).to have_content("What does the initiative consist of?")
+              expect(page).to have_content("Review the content of your initiative.")
             end
           end
         end
@@ -356,10 +356,9 @@ describe "Initiative", type: :system do
       organization.update(rich_text_editor_in_public_views: true)
       click_link "New initiative"
       first("button.card__highlight").click
-      first("button.card__highlight").click
     end
 
-    it_behaves_like "having a rich text editor", "new_initiative_previous_form", "full"
+    it_behaves_like "having a rich text editor", "new_initiative_form", "full"
   end
 
   describe "creating an initiative" do
@@ -407,7 +406,7 @@ describe "Initiative", type: :system do
 
         it "offers contextual help" do
           within ".callout.secondary" do
-            expect(page).to have_content("What does the initiative consist of? Write down the title and description. We recommend a short and concise title and a description focused on the proposed solution.")
+            expect(page).to have_content("Review the content of your initiative.")
           end
         end
       end
@@ -438,37 +437,8 @@ describe "Initiative", type: :system do
 
         it "offers contextual help" do
           within ".callout.secondary" do
-            expect(page).to have_content("What does the initiative consist of? Write down the title and description. We recommend a short and concise title and a description focused on the proposed solution.")
+            expect(page).to have_content("Review the content of your initiative.")
           end
-        end
-      end
-
-      context "when Show similar initiatives" do
-        let!(:initiative) { create(:initiative, organization:) }
-
-        before do
-          first("button.card__highlight").click
-          fill_in "Title", with: translated(initiative.title, locale: :en)
-          fill_in "initiative_description", with: translated(initiative.description, locale: :en)
-          find_button("Continue").click
-        end
-
-        it "similar initiatives view is shown" do
-          expect(page).to have_content("Compare")
-        end
-
-        it "offers contextual help" do
-          within ".callout.secondary" do
-            expect(page).to have_content("If any of the following initiatives is similar to yours we encourage you to sign it. Your proposal will have more possibilities to get done.")
-          end
-        end
-
-        it "contains data about the similar initiative found" do
-          expect(page).to have_content(translated(initiative.title, locale: :en))
-          expect(page).to have_content(ActionView::Base.full_sanitizer.sanitize(translated(initiative.description, locale: :en), tags: []))
-          expect(page).to have_content(translated(initiative.type.title, locale: :en))
-          expect(page).to have_content(translated(initiative.scope.name, locale: :en))
-          expect(page).to have_content(initiative.author_name)
         end
       end
 
@@ -494,9 +464,6 @@ describe "Initiative", type: :system do
         context "when there are several initiatives type" do
           before do
             first("button.card__highlight").click
-            fill_in "Title", with: translated(initiative.title, locale: :en)
-            fill_in "initiative_description", with: translated(initiative.description, locale: :en)
-            find_button("Continue").click
           end
 
           it "create view is shown" do
@@ -509,12 +476,6 @@ describe "Initiative", type: :system do
               expect(page).to have_content("You have to choose the type of signature. In-person, online or a combination of both")
               expect(page).to have_content("Which is the geographic scope of the initiative?")
             end
-          end
-
-          it "shows information collected in previous steps already filled" do
-            expect(find(:xpath, "//input[@id='initiative_type_id']", visible: :all).value).to eq(initiative_type.id.to_s)
-            expect(find(:xpath, "//input[@id='initiative_title']").value).to eq(translated(initiative.title, locale: :en))
-            expect(find(:xpath, "//textarea[@id='initiative_description']", visible: :all).value).to eq(translated(initiative.description, locale: :en))
           end
 
           context "when only one signature collection and scope are available" do
@@ -605,7 +566,7 @@ describe "Initiative", type: :system do
           let(:initiative_type_minimum_committee_members) { 0 }
 
           it "skips to next step" do
-            within(".step--active") do
+            within("#wizard-steps [data-active]") do
               expect(page).not_to have_content("Promoter committee")
               expect(page).to have_content("Finish")
             end
@@ -634,7 +595,7 @@ describe "Initiative", type: :system do
 
           select(translated(initiative_type_scope.scope.name, locale: :en), from: "Scope")
           select("Online", from: "Signature collection type")
-          dynamically_attach_file(:initiative_documents, Decidim::Dev.asset("Exampledocument.pdf"))
+          dynamically_attach_file(:initiative_add_documents, Decidim::Dev.asset("Exampledocument.pdf"), front_interface: true)
           find_button("Continue").click
         end
 
@@ -654,9 +615,7 @@ describe "Initiative", type: :system do
           end
 
           it "displays an edit link" do
-            within ".actions" do
-              expect(page).to have_link("Edit my initiative")
-            end
+            expect(page).to have_link("Edit my initiative")
           end
         end
 
@@ -666,10 +625,8 @@ describe "Initiative", type: :system do
 
           it "displays a send to technical validation link" do
             expected_message = "You are going to send the initiative for an admin to review it and publish it. Once published you will not be able to edit it. Are you sure?"
-            within ".actions" do
-              expect(page).to have_link("Send my initiative")
-              expect(page).to have_selector "a[data-confirm='#{expected_message}']"
-            end
+            expect(page).to have_link("Send my initiative to technical validation")
+            expect(page).to have_selector "a[data-confirm='#{expected_message}']"
           end
 
           it_behaves_like "initiatives path redirection"
@@ -683,10 +640,8 @@ describe "Initiative", type: :system do
           expected_message = "You are going to send the initiative for an admin to review it and publish it. Once published you will not be able to edit it. Are you sure?"
 
           it "displays a send to technical validation link" do
-            within ".actions" do
-              expect(page).to have_link("Send my initiative")
-              expect(page).to have_selector "a[data-confirm='#{expected_message}']"
-            end
+            expect(page).to have_link("Send my initiative to technical validation")
+            expect(page).to have_selector "a[data-confirm='#{expected_message}']"
           end
 
           it_behaves_like "initiatives path redirection"

@@ -49,7 +49,7 @@ describe("CommentsComponent", () => {
   const spyOnAddComment = (methodToSpy) => {
     addComment.each((i) => {
       addComment[i].$ = $(addComment[i]);
-      addComment[i].opinionToggles = $(".opinion-toggle .button", addComment[i].$);
+      addComment[i].opinionToggles = $(".opinion-toggle button", addComment[i].$);
       addComment[i].commentForm = $("form", addComment[i].$);
       addComment[i].commentTextarea = $("textarea", addComment[i].commentForm);
 

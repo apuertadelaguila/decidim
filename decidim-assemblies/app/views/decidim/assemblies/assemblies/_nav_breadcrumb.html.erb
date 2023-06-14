@@ -1,11 +1,7 @@
-<div class="lines-breadcrumb">
-  <% root = assemblies.shift %>
-  <%= link_to translated_attribute(root.title), assembly_path(root) %>
+<% root = assemblies.shift %>
+<%= link_to translated_attribute(root.title), assembly_path(root), class: "button button__text-secondary" %>
 
-  <% assemblies.each do |assembly| %>
-    <span class="breadcrumb--separator">></span>
-    <div>
-      <%= link_to translated_attribute(assembly.title), assembly_path(assembly) %>
-    </div>
-  <% end %>
-</div>
+<% assemblies.each do |assembly| %>
+  <%= icon "arrow-right-line" %>
+  <%= link_to translated_attribute(assembly.title), assembly_path(assembly), class: "button button__text-secondary" %>
+<% end %>

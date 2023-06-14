@@ -149,13 +149,13 @@ describe "Assemblies", type: :system do
       let(:target_path) { decidim_assemblies.assembly_path(assembly) }
     end
 
-    context "and requesting the assembly path with main data and metadata blocks active" do
+    context "and requesting the assembly path with main data and type and duration blocks active" do
       before do
         visit decidim_assemblies.assembly_path(assembly)
       end
 
-      context "when hero, main_data and metadata blocks are enabled" do
-        let(:blocks_manifests) { [:hero, :main_data, :metadata] }
+      context "when hero, main_data and type and duration blocks are enabled" do
+        let(:blocks_manifests) { [:hero, :main_data, :extra_data, :metadata] }
 
         before do
           visit decidim_assemblies.assembly_path(assembly)
@@ -240,34 +240,6 @@ describe "Assemblies", type: :system do
         it "shows the children assemblies by weigth" do
           expect(titles.first.text).to eq translated(child_assembly.title)
           expect(titles.last.text).to eq translated(second_child_assembly.title)
-        end
-
-        context "when child assembly has a meeting" do
-          let(:meetings_component) { create(:meeting_component, :published, participatory_space: child_assembly) }
-
-          context "with unpublished meeting" do
-            let!(:meeting) { create(:meeting, :upcoming, component: meetings_component) }
-
-            it "is not displaying the widget" do
-              visit decidim_assemblies.assembly_path(assembly)
-
-              within(".assembly__block-grid") do
-                expect(page).to have_no_css("[data-upcoming-meeting]")
-              end
-            end
-          end
-
-          context "with published meeting" do
-            let!(:meeting) { create(:meeting, :upcoming, :published, component: meetings_component) }
-
-            it "is displaying the widget" do
-              visit decidim_assemblies.assembly_path(assembly)
-
-              within(".assembly__block-grid") do
-                expect(page).to have_css("[data-upcoming-meeting]")
-              end
-            end
-          end
         end
       end
 

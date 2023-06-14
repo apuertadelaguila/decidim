@@ -476,13 +476,7 @@ en:
           all: All
           date: Date
           finished: Finished
-          search: Search
           upcoming: Upcoming
-        filters_small_view:
-          close_modal: Close modal
-          filter: Filter
-          filter_by: Filter by
-          unfold: Unfold
         preview:
           available_answers: 'Available answers:'
           description: 'These are the questions you will find in the voting process:'
@@ -501,7 +495,6 @@ en:
             change_vote: Change your vote
             vote: Start voting
             vote_again: Vote again
-          back: Available elections
           callout:
             already_voted: You have already voted in this election. You can change your vote or verify it.
             pending_vote: Your vote is being casted on the server.
@@ -651,7 +644,7 @@ en:
             success: Your identification public key was successfully stored.
       votes:
         ballot_decision:
-          audit: "( Audit ballot )"
+          audit: Audit ballot
           back: Start voting process again
           ballot_hash: 'Your ballot identifier is:'
           cast: Cast ballot to finish your vote
@@ -688,12 +681,14 @@ en:
           text: Something went wrong, please try it again.
           try_again: Try again
         header:
-          ballot_decision: Cast or audit your vote
           casting: Casting the vote
-          confirm: Confirm your vote
           confirmed: Vote confirmed
-          encrypting: Encrypting the vote
+          confirm: Confirm
+          ballot_decision: Cast
           failed: Vote failed
+          register: Register
+          election: Election
+          vote_for: Vote for %{title}
         messages:
           invalid_token: Your session in the voting booth is not valid. Try to vote again.
           not_allowed: You are not allowed to vote on this election at this moment.
@@ -706,9 +701,8 @@ en:
           nota_option: Blank/ None of the above
           preview_alert: This is a preview of the voting booth.
           question_steps: Question %{current_step} of %{total_steps}
-          selections: "%{selected} of %{max_selections}<br> selections"
+          selections: "%{selected} of %{max_selections} selections"
         onboarding_modal:
-          close: Close modal
           create_account: Create Account
           description: Do you want to create a new account on the platform? You will be able to participate in the processes and be an active part of the organization.
           no_account: No, thanks.

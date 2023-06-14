@@ -81,3 +81,24 @@
     }
   }
 }
+
+.layout-main__section + .layout-main__section,
+.layout-aside__section + .layout-aside__section,
+.layout-item__main ~ .layout-item__main,
+.layout-item__aside--footer > * + *{
+  --vertical-spacing: 3.5rem;
+
+  @apply mt-[var(--vertical-spacing)];
+}
+
+.layout-main__heading{
+  @apply space-y-8;
+}
+
+.layout-author{
+  @apply flex items-center gap-4;
+}
+
+.layout-aside__buttons{
+  @apply space-y-4;
+}

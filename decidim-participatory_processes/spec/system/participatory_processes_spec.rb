@@ -31,7 +31,8 @@ describe "Participatory Processes", type: :system do
     it "does not show the menu link" do
       visit decidim.root_path
 
-      within ".main-nav" do
+      find("button#main-dropdown-summary").hover
+      within "#breadcrumb-main-dropdown-desktop" do
         expect(page).to have_no_content("Processes")
       end
     end
@@ -59,7 +60,8 @@ describe "Participatory Processes", type: :system do
       it "the menu link is not shown" do
         visit decidim.root_path
 
-        within ".main-nav" do
+        find("button#main-dropdown-summary").hover
+        within "#breadcrumb-main-dropdown-desktop" do
           expect(page).to have_no_content("Processes")
         end
       end
@@ -97,7 +99,8 @@ describe "Participatory Processes", type: :system do
         it "the menu link is not shown" do
           visit decidim.root_path
 
-          within ".main-nav" do
+          find("button#main-dropdown-summary").hover
+          within "#breadcrumb-main-dropdown-desktop" do
             expect(page).to have_content("Processes")
             click_link "Processes"
           end
@@ -334,8 +337,8 @@ describe "Participatory Processes", type: :system do
       end
 
       context "when requesting the process path" do
-        context "when hero, main_data and metadata blocks are enabled" do
-          let(:blocks_manifests) { [:process_hero, :main_data, :metadata] }
+        context "when hero, main_data and phase and duration blocks are enabled" do
+          let(:blocks_manifests) { [:process_hero, :main_data, :extra_data] }
 
           it "shows the details of the given process" do
             within "[data-content]" do
@@ -363,7 +366,7 @@ describe "Participatory Processes", type: :system do
 
         context "and it belongs to a group" do
           let!(:group) { create :participatory_process_group, participatory_processes: [participatory_process], organization: }
-          let(:blocks_manifests) { [:metadata] }
+          let(:blocks_manifests) { [:extra_data] }
 
           it "has a link to the group the process belongs to" do
             visit decidim_participatory_processes.participatory_process_path(participatory_process)

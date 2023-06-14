@@ -282,6 +282,7 @@ describe "Conversations", type: :system do
 
         it "has contact muted" do
           expect(page).not_to have_link(href: decidim.new_conversation_path(recipient_id: recipient.id))
+          expect(page).to have_css("button[disabled]", text: "Message")
         end
       end
     end

@@ -1,5 +1,7 @@
-<div>
+<div class="space-y-8">
   <%= render :title %>
 </div>
 
-<%= nav_links %>
+<% if nav_items.present? %>
+  <%= cell "decidim/nav_links", nav_items %>
+<% end %>

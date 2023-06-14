@@ -179,3 +179,11 @@ input[type="search"]::-webkit-search-cancel-button{
 .autoComplete_wrapper{
   display: block;
 }
+
+input[type="search"]::-webkit-search-cancel-button{
+  -webkit-appearance: none;
+}
+
+.autoComplete_wrapper{
+  display: block;
+}

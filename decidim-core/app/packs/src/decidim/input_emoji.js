@@ -89,7 +89,6 @@ export class EmojiButton {
     // belong to for Foundation Abide to show them automatically.
     parent.querySelectorAll(".form-error").forEach((el) => wrapper.appendChild(el));
 
-    console.log(screens);
     const picker = createPopup({
       autoFocus: "search",
       locale: document.documentElement.getAttribute("lang"),

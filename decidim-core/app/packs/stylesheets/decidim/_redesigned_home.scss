@@ -80,4 +80,20 @@
       @apply hidden;
     }
   }
+
+  &__menu{
+    @apply bg-primary p-0 md:p-4;
+  }
+
+  &__menu__container{
+    @apply grid grid-cols-1 md:grid-cols-5 md:w-2/4 m-auto;
+  }
+
+  &__menu-element{
+    @apply first:border-t md:first:border-t-0 border-b md:border-b-0 md:border-l border-white md:last:border-r hover:underline;
+  }
+
+  &__menu-element--link{
+    @apply p-4 text-white text-sm font-semibold text-center block;
+  }
 }
